@@ -2,6 +2,7 @@ package com.datastax.kafka_to_sparkstreaming_to_graph
 
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.DataFrame
+import org.apache.spark.sql.functions._
 
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 import org.apache.spark.streaming.kafka010._
@@ -18,7 +19,7 @@ object AmazonStreamedFromKafka
 	var ssc: StreamingContext = null
 	var graphframes_utility: AmazonGraphFramesUtility = null
 
-	def get_DStream(topics: Array[String], kafka_params: Map[String,Object])
+	def get_DStream(topics: Array[String], kafka_params: Map[String,Object]) : DStream[ConsumerRecord[String,String]] =
 	{
 		val dstream = KafkaUtils.createDirectStream[String, String](
 					ssc,
@@ -27,7 +28,7 @@ object AmazonStreamedFromKafka
 		return dstream
 	}
 
-	def load_from_DStream(dstream: DStream[ConsumerRecord[String,String]], data_source: String) : DStream[ConsumerRecord[String,String]] =
+	def load_from_DStream(dstream: DStream[ConsumerRecord[String,String]], data_source: String)
 	{
 		dstream.map(record => record.value)
 			.foreachRDD( rdd => {
@@ -81,8 +82,8 @@ object AmazonStreamedFromKafka
 			"enable.auto.commit" -> (false: java.lang.Boolean)
 		)
 
-		val item_dstream = get_DStream(item_topic, kafka_params)
-		val reviews_dstream = get_DStream(review_topic, kafka_params)
+		val item_dstream = this.get_DStream(item_topic, kafka_params)
+		val reviews_dstream = this.get_DStream(review_topic, kafka_params)
 
 		this.load_from_DStream(item_dstream, "metadata")
 		this.load_from_DStream(reviews_dstream, "reviews")
