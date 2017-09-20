@@ -4,8 +4,11 @@ This Spark application loads data from a Kafka queue into a DseGraph instance, b
 
 ### Documentation
 Apache Kafka: http://kafka.apache.org/documentation/
+
 Apache Spark Streaming: https://spark.apache.org/docs/latest/streaming-programming-guide.html
+
 Kafka + Spark Streaming Integration: https://spark.apache.org/docs/latest/streaming-kafka-integration.html
+
 DSE GraphFrames: https://docs.datastax.com/en/dse/5.1/dse-dev/datastax_enterprise/graph/graphAnalytics/dseGraphFrameImport.html
 
 ### Getting Started
