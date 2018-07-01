@@ -37,10 +37,12 @@ sbt package
 
 == ABOUT THE GRAPH DATA SET
 
-In this Spark application, we will be dealing with a subset of the Amazon graph data set:
+In this Spark application, we will be dealing with a subset of the Amazon graph data set (http://jmcauley.ucsd.edu/data/amazon/links.html) to your DSE Spark cluster. The data comes in the following JSON format:
 
 
-2. Download and unpack the Amazon data set (http://jmcauley.ucsd.edu/data/amazon/links.html) to your DSE Spark cluster:
+which makes the DataFrames API a natural choice to use for its storage and manipulation in Spark.
+
+Provided in the project is a bash script for downloading
 ```
 wget -P <DESTINATION DIRECTORY>
 wget -P <DESTINATION DIRECTORY>
@@ -51,7 +53,7 @@ wget -P <DESTINATION DIRECTORY>
 
 This Spark application will be reading data that is streamed into appropriate queues (topics) in Kafka. The following steps will get you started with this initial setup:
 
-* From the project's root directory unpack the Kafka project that is provided:
+*  /* From the project's root directory unpack the Kafka project that is provided:
 
 ```
 cd <PATH TO kafka_to_sparkstreaming_to_graph>/resources/kafka
@@ -63,7 +65,7 @@ You should now see a subdirectory `kafka_2.11-0.11.0.1`, which contains pre-buil
 automaton@ip-10-200-177-27:~/kafka_to_sparkstreaming_to_graph$ ls
 build.sbt  kafka_2.11-0.11.0.1  kafka_2.11-0.11.0.1.tgz  README.md  resources  scripts  src
 ```
-
+*/
 
 * Launch the ZooKeeper server as a background process:
 ```
