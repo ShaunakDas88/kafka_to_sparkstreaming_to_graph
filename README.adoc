@@ -49,9 +49,9 @@ wget -P <DESTINATION DIRECTORY>
 
 == APACHE KAFKA SETUP
 
-This Spark application will depend on Apache Kafka for grabbing data that is streamed into appropriate queues (Kafka topics)
+This Spark application will be reading data that is streamed into appropriate queues (topics) in Kafka. The following steps will get you started with this initial setup:
 
-From the project's root directory unpack the Kafka project that is provided:
+* From the project's root directory unpack the Kafka project that is provided:
 
 ```
 cd <PATH TO kafka_to_sparkstreaming_to_graph>/resources/kafka
@@ -65,7 +65,18 @@ build.sbt  kafka_2.11-0.11.0.1  kafka_2.11-0.11.0.1.tgz  README.md  resources  s
 ```
 
 
-4. Launch the ZooKeeper server as a background process:
+* Launch the ZooKeeper server as a background process:
+```
+automaton@ip-10-200-177-27:~/kafka_to_sparkstreaming_to_graph$ kafka_2.11-0.11.0.1/bin/zookeeper-server-start.sh kafka_2.11-0.11.0.1/config/zookeeper.properties &
+```
+Note that we are specifying an already provided configuration file `kafka_2.11-0.11.0.1/config/zookeeper.properties` here. 
+
+When listing all running Java processes, we should now see `QuorumPeerMain`
+```
+automaton@ip-10-200-177-27:~/kafka_to_sparkstreaming_to_graph$ jps
+14417 QuorumPeerMain
+14703 Jps
+```
 
 
 
