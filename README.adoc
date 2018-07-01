@@ -71,8 +71,6 @@ build.sbt  kafka_2.11-0.11.0.1  kafka_2.11-0.11.0.1.tgz  README.md  resources  s
 
 5. Launch the Kafka server as a background process:
 
-
-
 === LOADING THE DATA INTO KAFKA TOPICS
 
 The main abstraction which Kafka uses for reading and storing streamed input is a topic. Our Amazon data set consists of two json files:
@@ -91,8 +89,7 @@ Let's go ahead and make a topic for each of these files:
 
 7. Launch the Kafka standalone application:
 
-8.
 
+== RUNNING THE SPARK APPLICATION
 
-
-
+Now that the overhead involved with setting up our Kafka topics is done, we return to the Spark application itself, for loading data into DSE Graph.
