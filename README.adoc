@@ -13,7 +13,8 @@ Kafka + Spark Streaming Integration: https://spark.apache.org/docs/latest/stream
 DSE GraphFrames: https://docs.datastax.com/en/dse/5.1/dse-dev/datastax_enterprise/graph/graphAnalytics/dseGraphFrameImport.html
 
 
-### Getting Started
+== BUILD INSTRUCTIONS
+
 This project leverage sbt for Scala package management and building. In addition, one must have DSE Spark already running on their cluster. 
 
 1. Clone the kafka_to_sparkstreaming_to_graph project to your cluster that is running DSE Spark, and build with sbt
