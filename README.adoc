@@ -95,7 +95,6 @@ automaton@ip-10-200-177-27:~/kafka_to_sparkstreaming_to_graph$ jps
 15071 Kafka
 ```
 
-
 === LOADING THE DATA INTO KAFKA TOPICS
 
 The main abstraction which Kafka uses for reading and storing streamed input is a topic. Our Amazon data set consists of two json files:
@@ -115,6 +114,16 @@ Let's go ahead and make a topic for each of these files:
 7. Launch the Kafka standalone application:
 
 
+== SETTING UP THE DSE GRAPH SCHEMA
+
+Provided in the project's `resources` subdirectory is a sample DSE Graph schema script `AmazonDSEMaterializedCustomID.groovy`, used for loading data into a DSE Graph instance called `graph_stress`. Let's go ahead and create this Graph schema through the Gremlin shell with the following script:
+```
+
+```
+
+
+
+
 == RUNNING THE SPARK APPLICATION
 
-Now that the overhead involved with setting up our Kafka topics is done, we return to the Spark application itself, for loading data into DSE Graph.
+Now that the overhead involved with setting up our Kafka topics and DSE Graph instance is finished, we return to the Spark application itself, for loading data into our craeted DSE Graph instance 'graph_stress`.
