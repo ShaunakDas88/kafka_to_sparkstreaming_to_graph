@@ -2,7 +2,8 @@
 
 This Spark application loads data from a Kafka queue into a DseGraph instance, by way of SparkStreaming and DseGraphFrames APIs.
 
-### Documentation
+== RELEVANT DOCUMENTATION
+
 Apache Kafka: http://kafka.apache.org/documentation/
 
 Apache Spark Streaming: https://spark.apache.org/docs/latest/streaming-programming-guide.html
@@ -11,6 +12,7 @@ Kafka + Spark Streaming Integration: https://spark.apache.org/docs/latest/stream
 
 DSE GraphFrames: https://docs.datastax.com/en/dse/5.1/dse-dev/datastax_enterprise/graph/graphAnalytics/dseGraphFrameImport.html
 
+
 ### Getting Started
 This project leverage sbt for Scala package management and building. In addition, one must have DSE Spark already running on their cluster. 
 
@@ -18,10 +20,16 @@ This project leverage sbt for Scala package management and building. In addition
 ```
 git clone git@github.com:ShaunakDas88/kafka_to_sparkstreaming_to_graph.git
 ```
+
 ```
 cd <PATH TO kafka_to_sparkstreaming_to_graph>
 sbt package
 ```
+
+== ABOUT THE GRAPH DATA SET
+
+In this Spark application, we will be dealing with a subset of the Amazon graph data set:
+
 
 2. Download and unpack the Amazon data set (http://jmcauley.ucsd.edu/data/amazon/links.html) to your DSE Spark cluster:
 ```
@@ -29,17 +37,48 @@ wget -P <DESTINATION DIRECTORY>
 wget -P <DESTINATION DIRECTORY>
 ```
 
-3. Unpack the Kafka project that is provided within this project
+
+== APACHE KAFKA SETUP
+
+This Spark application will depend on Apache Kafka for grabbing data that is streamed into appropriate queues (Kafka topics)
+
+From the project's root directory unpack the Kafka project that is provided:
+
 ```
 cd <PATH TO kafka_to_sparkstreaming_to_graph>/resources/kafka
-tar -zxvf 
+tar -zxvf kafka_2.11-0.11.0.1.tgz
 ```
+You should now see a subdirectory `kafka_2.11-0.11.0.1`, which contains pre-built Kafka 2.11. 
+
+```
+automaton@ip-10-200-177-27:~/kafka_to_sparkstreaming_to_graph$ ls
+build.sbt  kafka_2.11-0.11.0.1  kafka_2.11-0.11.0.1.tgz  README.md  resources  scripts  src
+```
+
 
 4. Launch the ZooKeeper server as a background process:
 
-5. Launch the Kafka server as a backgorund process:
 
-6. Create two topics, one for the Amazon metadata and one for the Amazon reviews data:
+
+5. Launch the Kafka server as a background process:
+
+
+
+=== Loading the Amazon data set into Kafka topics
+
+The main abstraction which Kafka uses for reading and storing streamed input is a topic. Our Amazon data set consists of two json files:
+
+-
+- 
+
+Let's go ahead and make a topic for each of these files:
+
+```
+
+
+```
+
+
 
 7. Launch the Kafka standalone application:
 
