@@ -1,6 +1,6 @@
 # kafka_to_sparkstreaming_to_graph
 
-This Spark application loads data from a Kafka queue into a DseGraph instance, by way of SparkStreaming and DseGraphFrames APIs.
+This Spark application loads data from a Kafka queue into a DSE Graph instance, by way of Spark Streaming and DSE GraphFrames APIs.
 
 
 == RELEVANT DOCUMENTATION
