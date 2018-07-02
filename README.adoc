@@ -261,7 +261,7 @@ Topic:reviews	PartitionCount:1	ReplicationFactor:1	Configs:
 [2018-07-02 00:19:40,077] INFO Closed socket connection for client /127.0.0.1:33820 which had sessionid 0x16456fc6dc80003 (org.apache.zookeeper.server.NIOServerCnxn)
 ```
 
-Next, we re-direct data from our json files into the respective topics that were just created
+Next, we re-direct data from our JSON files into the respective topics that were just created
 
 * Item metadata:
 ```
@@ -283,3 +283,9 @@ Note that the ordered arguments we pass in are `graph_stress`, `metadata`, and `
 
 
 == VERIFY LOADING
+
+Once the Spark application has successfully processed all records in both Kafka topics, and finished, we can verify that loading was successful through the DSE Spark shell:
+```
+
+```
+
