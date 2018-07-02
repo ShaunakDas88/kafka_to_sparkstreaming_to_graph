@@ -260,9 +260,6 @@ Topic:reviews	PartitionCount:1	ReplicationFactor:1	Configs:
 [2018-07-02 00:19:40,077] INFO Closed socket connection for client /127.0.0.1:33820 which had sessionid 0x16456fc6dc80003 (org.apache.zookeeper.server.NIOServerCnxn)
 ```
 
-7. Launch the Kafka standalone application: ????
-
-
 == RUNNING THE SPARK APPLICATION
 
 Now that the overhead involved with setting up our Kafka topics and DSE Graph instance is finished, we return to the Spark application itself, for loading data into our created DSE Graph instance 'graph_stress`. The following command will do such:
