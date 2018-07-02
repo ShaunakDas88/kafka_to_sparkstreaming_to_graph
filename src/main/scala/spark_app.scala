@@ -43,12 +43,12 @@ object AmazonStreamedFromKafka
 					this.graphframes_utility.load_category_vertices(true_df)
 
 					// load relevant edges
-					this.graphframes_utility.load_belongs_in_category_edges(true_df)
-					this.graphframes_utility.load_viewed_with_edges(true_df)
+					//this.graphframes_utility.load_belongs_in_category_edges(true_df)
+					//this.graphframes_utility.load_viewed_with_edges(true_df)
 					//this.graphframes_utility.load_has_salesRank_edges(true_df)
-					this.graphframes_utility.load_also_bought_edges(true_df)
-					this.graphframes_utility.load_bought_after_viewing_edges(true_df)
-					this.graphframes_utility.load_purchased_with_edges(true_df)
+					//this.graphframes_utility.load_also_bought_edges(true_df)
+					//this.graphframes_utility.load_bought_after_viewing_edges(true_df)
+					//this.graphframes_utility.load_purchased_with_edges(true_df)
 				}
 				else if(data_source == "reviews")
 				{
@@ -56,7 +56,7 @@ object AmazonStreamedFromKafka
 					this.graphframes_utility.load_customer_vertices(true_df)
 					
 					// load relevant edges
-					this.graphframes_utility.load_reviewed_edges(true_df)
+					//this.graphframes_utility.load_reviewed_edges(true_df)
 				}
 			})
 	}
