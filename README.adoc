@@ -50,8 +50,106 @@ In this Spark application, we will be dealing with a subset of the Amazon graph 
 ```
 This makes the DataFrames API a natural choice to use for its storage and manipulation in Spark.
 
-Provided in the project is a bash script for downloading and unzipping the Grocery and Gourmet Foods subset of the Amazon data:
+Provided in the project is a bash script for downloading and unzipping the Grocery and Gourmet Foods subset of the Amazon data. Go ahead and run the following:
 ```
+```
+
+=== SETTING UP THE DSE GRAPH SCHEMA
+
+Provided in the project's `resources` subdirectory is a sample DSE Graph schema script `AmazonDSEMaterializedCustomID.groovy`, used for loading data into a DSE Graph instance called `graph_stress`. Let's go ahead and create this Graph schema through the Gremlin shell with the following script:
+```
+automaton@ip-10-200-177-27:~/kafka_to_sparkstreaming_to_graph$ cat resources/schema/AmazonDSEMaterializedCustomID.groovy | dse gremlin-console
+
+         \,,,/
+         (o o)
+-----oOOo-(3)-oOOo-----
+plugin activated: tinkerpop.tinkergraph
+plugin activated: tinkerpop.server
+plugin activated: tinkerpop.utilities
+gremlin> if(system.graph("graph_stress").exists()) {
+......1>   system.graph("graph_stress").drop()
+......2> }
+==>null
+gremlin> system.graph("graph_stress").create()
+==>null
+gremlin> :remote config alias g graph_stress.g
+==>g=graph_stress.g
+gremlin> schema.config().option('graph.schema_mode').set(com.datastax.bdp.graph.api.model.Schema.Mode.Production);
+==>null
+gremlin> 
+gremlin> schema.propertyKey('summary').Text().single().create()
+==>null
+gremlin> schema.propertyKey('rating').Double().single().create()
+==>null
+gremlin> schema.propertyKey('description').Text().single().create()
+==>null
+gremlin> schema.propertyKey('title').Text().single().create()
+==>null
+gremlin> schema.propertyKey('imUrl').Text().single().create()
+==>null
+gremlin> schema.propertyKey('name').Text().single().create()
+==>null
+gremlin> schema.propertyKey('price').Double().single().create()
+==>null
+gremlin> schema.propertyKey('rank').Int().single().create()
+==>null
+gremlin> schema.propertyKey('id').Text().single().create()
+==>null
+gremlin> schema.propertyKey('helpful').Double().single().create()
+==>null
+gremlin> schema.propertyKey('brand').Text().single().create()
+==>null
+gremlin> schema.propertyKey('reviewText').Text().single().create()
+==>null
+gremlin> schema.propertyKey('timestamp').Timestamp().single().create()
+==>null
+gremlin> schema.propertyKey('timestampAsText').Text().single().create()
+==>null
+gremlin> schema.propertyKey('answer').Text().single().create()
+==>null
+gremlin> schema.propertyKey('answerType').Text().single().create()
+==>null
+gremlin> schema.propertyKey('question').Text().single().create()
+==>null
+gremlin> schema.propertyKey('questionType').Text().single().create()
+==>null
+gremlin> 
+gremlin> schema.vertexLabel('Item').partitionKey("id").properties('price', 'title', 'imUrl', 'description', 'brand').create()
+==>null
+gremlin> schema.vertexLabel('Category').partitionKey('id').create()
+==>null
+gremlin> schema.vertexLabel('Customer').partitionKey('id').properties('name').create()
+==>null
+gremlin> schema.vertexLabel('Question').partitionKey('id').properties('timestampAsText', 'timestamp', 'answerType', 'answer', 'question', 'questionType').create()
+==>null
+gremlin> 
+gremlin> schema.edgeLabel('viewed_with').connection('Item', 'Item').create()
+==>null
+gremlin> schema.edgeLabel('also_bought').connection('Item', 'Item').create()
+==>null
+gremlin> schema.edgeLabel('reviewed').properties('summary', 'reviewText', 'timestampAsText', 'timestamp', 'helpful', 'rating').connection('Customer', 'Item').create()
+==>null
+gremlin> schema.edgeLabel('purchased_with').connection('Item', 'Item').create()
+==>null
+gremlin> schema.edgeLabel('belongs_in_category').connection('Item', 'Category').create()
+==>null
+gremlin> schema.edgeLabel('has_salesRank').properties('rank').connection('Item', 'Category').create()
+==>null
+gremlin> schema.edgeLabel('bought_after_viewing').connection('Item', 'Item').create()
+==>null
+gremlin> 
+gremlin> schema.vertexLabel('Item').index('byprice').materialized().by('price').add()
+==>null
+gremlin> schema.vertexLabel('Customer').index('byrating').outE("reviewed").by('rating').add()
+==>null
+gremlin> schema.vertexLabel('Item').index('byreviewText').outE("reviewed").by('reviewText').add()
+==>null
+gremlin> schema.vertexLabel('Item').index('bytimestamp').inE('reviewed').by('timestamp').add()
+==>null
+gremlin> schema.vertexLabel("Item").index("customer_review_by_rating").inE("reviewed").by("rating").add()
+==>null
+gremlin> schema.vertexLabel('Question').index('byAnswerType').materialized().by('answerType').add()
+==>null
 ```
 
 
@@ -129,16 +227,6 @@ Topic:reviews	PartitionCount:1	ReplicationFactor:1	Configs:
 ```
 
 7. Launch the Kafka standalone application: ????
-
-
-== SETTING UP THE DSE GRAPH SCHEMA
-
-Provided in the project's `resources` subdirectory is a sample DSE Graph schema script `AmazonDSEMaterializedCustomID.groovy`, used for loading data into a DSE Graph instance called `graph_stress`. Let's go ahead and create this Graph schema through the Gremlin shell with the following script:
-```
-
-```
-
-
 
 
 == RUNNING THE SPARK APPLICATION
