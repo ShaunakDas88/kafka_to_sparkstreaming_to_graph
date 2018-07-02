@@ -40,7 +40,7 @@ object AmazonStreamedFromKafka
 				{
 					// load relevant vertices
 					this.graphframes_utility.load_item_vertices(true_df)
-					this.graphframes_utility.load_category_vertices(true_df)
+					//this.graphframes_utility.load_category_vertices(true_df)
 
 					// load relevant edges
 					//this.graphframes_utility.load_belongs_in_category_edges(true_df)
@@ -81,10 +81,10 @@ object AmazonStreamedFromKafka
 		)
 
 		val item_dstream = this.get_DStream(item_topic, kafka_params)
-		val reviews_dstream = this.get_DStream(review_topic, kafka_params)
+		//val reviews_dstream = this.get_DStream(review_topic, kafka_params)
 
 		this.load_from_DStream(item_dstream, "metadata")
-		this.load_from_DStream(reviews_dstream, "reviews")
+		//this.load_from_DStream(reviews_dstream, "reviews")
 
 		this.ssc.start()
 		this.ssc.awaitTermination()
