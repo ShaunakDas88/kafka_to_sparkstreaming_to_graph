@@ -58,7 +58,7 @@ Provided in the project is a bash script for downloading and unzipping the Groce
 
 Provided in the project's `resources` subdirectory is a sample DSE Graph schema script `AmazonDSEMaterializedCustomID.groovy`, used for loading data into a DSE Graph instance called `graph_stress`. Let's go ahead and create this Graph schema through the Gremlin shell with the following script:
 ```
-automaton@ip-10-200-177-27:~/kafka_to_sparkstreaming_to_graph$ cat resources/schema/AmazonDSEMaterializedCustomID.groovy | dse gremlin-console
+~/kafka_to_sparkstreaming_to_graph$ cat resources/schema/AmazonDSEMaterializedCustomID.groovy | dse gremlin-console
 
          \,,,/
          (o o)
