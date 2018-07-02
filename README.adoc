@@ -77,6 +77,14 @@ Saving to: ‘/home/automaton/kafka_to_sparkstreaming_to_graph//amazon_data/revi
 2018-07-02 01:28:51 (48.1 MB/s) - ‘/home/automaton/kafka_to_sparkstreaming_to_graph//amazon_data/reviews_Grocery_and_Gourmet_Food.json.gz’ saved [231127100/231127100]
 
 ```
+You should now see a subdirectory called `amazon_data`, containing two json files:
+```
+~/kafka_to_sparkstreaming_to_graph$ ls
+amazon_data  build.sbt  project  README.md  resources  src  target
+~/kafka_to_sparkstreaming_to_graph$ cd amazon_data/
+~/kafka_to_sparkstreaming_to_graph/amazon_data$ ls
+meta_Grocery_and_Gourmet_Food.json  reviews_Grocery_and_Gourmet_Food.json
+```
 
 === SETTING UP THE DSE GRAPH SCHEMA
 
@@ -189,7 +197,8 @@ You should now see a subdirectory `kafka_2.11-0.11.0.1`, which contains pre-buil
 
 ```
 ~/kafka_to_sparkstreaming_to_graph$ ls
-build.sbt  kafka_2.11-0.11.0.1  kafka_2.11-0.11.0.1.tgz  README.md  resources  scripts  src
+amazon_data  build.sbt  kafka_2.11-0.11.0.1  project  README.md  resources  src  target
+
 ```
 
 
