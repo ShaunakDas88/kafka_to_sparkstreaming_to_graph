@@ -222,10 +222,11 @@ When listing all running Java processes, we should now also see `Kafka`:
 
 === LOADING THE DATA INTO KAFKA TOPICS
 
-The main abstraction which Kafka uses for reading and storing streamed input is a topic. Our Amazon data set consists of two json files:
+The main abstraction which Kafka uses for reading and storing streamed input is a topic. As mentioned previously, our downloaded Amazon data set consists of two json files:
 
--
-- 
+* `meta_Grocery_and_Gourmet_Food.json` : metadata associated to Amazon items
+
+* `reviews_Grocery_and_Gourmet_Food.json` : Data corresponding to customer reviews of Amazon items
 
 Let's go ahead and make a topic for each of these files:
 
