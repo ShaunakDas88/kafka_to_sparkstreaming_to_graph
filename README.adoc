@@ -80,7 +80,7 @@ Saving to: ‘/home/automaton/kafka_to_sparkstreaming_to_graph//amazon_data/revi
 
 === SETTING UP THE DSE GRAPH SCHEMA
 
-Provided in the project's `resources` subdirectory is a sample DSE Graph schema script `AmazonDSEMaterializedCustomID.groovy`, used for loading data into a DSE Graph instance called `graph_stress`. Let's go ahead and create this Graph schema through the Gremlin shell with the following script:
+Provided in the project's `resources/schema` subdirectory is a sample DSE Graph schema script `AmazonDSEMaterializedCustomID.groovy`, used for loading data into a DSE Graph instance called `graph_stress`. Let's go ahead and create this Graph schema through the Gremlin shell with the following script:
 ```
 ~/kafka_to_sparkstreaming_to_graph$ cat resources/schema/AmazonDSEMaterializedCustomID.groovy | dse gremlin-console
 
