@@ -50,8 +50,32 @@ In this Spark application, we will be dealing with a subset of the Amazon graph 
 ```
 This makes the DataFrames API a natural choice to use for its storage and manipulation in Spark.
 
-Provided in the project is a bash script for downloading and unzipping the Grocery and Gourmet Foods subset of the Amazon data. Go ahead and run the following:
+Provided in the project's `resources/scripts` subdirectory is a bash script `download_amazon_data.sh` for downloading and unzipping the Grocery and Gourmet Foods subset of the Amazon data. Go ahead and run the following:
 ```
+~/kafka_to_sparkstreaming_to_graph$ export APP_ROOT=$HOME/kafka_to_sparkstreaming_to_graph/
+~/kafka_to_sparkstreaming_to_graph$ bash resources/scripts/download_amazon_data.sh 
+--2018-07-02 01:28:46--  http://snap.stanford.edu/data/amazon/productGraph/categoryFiles/meta_Grocery_and_Gourmet_Food.json.gz
+Resolving snap.stanford.edu (snap.stanford.edu)... 171.64.75.80
+Connecting to snap.stanford.edu (snap.stanford.edu)|171.64.75.80|:80... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 54490289 (52M) [application/x-gzip]
+Saving to: ‘/home/automaton/kafka_to_sparkstreaming_to_graph//amazon_data/meta_Grocery_and_Gourmet_Food.json.gz’
+
+100%[=================================================================================>] 54,490,289  74.9MB/s   in 0.7s   
+
+2018-07-02 01:28:46 (74.9 MB/s) - ‘/home/automaton/kafka_to_sparkstreaming_to_graph//amazon_data/meta_Grocery_and_Gourmet_Food.json.gz’ saved [54490289/54490289]
+
+--2018-07-02 01:28:46--  http://snap.stanford.edu/data/amazon/productGraph/categoryFiles/reviews_Grocery_and_Gourmet_Food.json.gz
+Resolving snap.stanford.edu (snap.stanford.edu)... 171.64.75.80
+Connecting to snap.stanford.edu (snap.stanford.edu)|171.64.75.80|:80... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 231127100 (220M) [application/x-gzip]
+Saving to: ‘/home/automaton/kafka_to_sparkstreaming_to_graph//amazon_data/reviews_Grocery_and_Gourmet_Food.json.gz’
+
+100%[=================================================================================>] 231,127,100 43.0MB/s   in 4.6s   
+
+2018-07-02 01:28:51 (48.1 MB/s) - ‘/home/automaton/kafka_to_sparkstreaming_to_graph//amazon_data/reviews_Grocery_and_Gourmet_Food.json.gz’ saved [231127100/231127100]
+
 ```
 
 === SETTING UP THE DSE GRAPH SCHEMA
