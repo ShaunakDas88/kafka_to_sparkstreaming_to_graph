@@ -61,7 +61,7 @@ This Spark application will be reading data that is streamed into appropriate qu
 
 * From the project's root directory unpack the Kafka project that is provided:
 ```
-tar -zxvf resources/kafka_2.11-0.11.0.1.tgz
+~/kafka_to_sparkstreaming_to_graph$ tar -zxvf resources/kafka_2.11-0.11.0.1.tgz
 ```
 You should now see a subdirectory `kafka_2.11-0.11.0.1`, which contains pre-built Kafka 2.11. 
 
