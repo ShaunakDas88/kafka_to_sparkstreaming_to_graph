@@ -32,9 +32,7 @@ object AmazonStreamedFromKafka
 	{
 		dstream.map(record => record.value)
 			.foreachRDD( rdd => {
-				val raw_df = this.spark.read.json(rdd)
-				val rdd_of_jsons = raw_df.select("payload").rdd.map(_.getString(0))   
-				val true_df = spark.read.json(rdd_of_jsons)
+				val true_df = this.spark.read.json(rdd)
 				true_df.printSchema()
 
 				// this is data-set specific

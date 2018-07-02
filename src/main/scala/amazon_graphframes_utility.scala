@@ -19,7 +19,6 @@ class AmazonGraphFramesUtility
 		this()
 		this.graph_name = graph_name
 		this.spark = spark
-		this.create_schema()
 		this.graph = spark.dseGraph(this.graph_name)
 	}
 
@@ -78,49 +77,5 @@ class AmazonGraphFramesUtility
 	def load_purchased_with_edges(metadata_df: DataFrame) {
 		val purchased_with_df = metadata_df.select(col("asin"), explode(col("related.bought_together")))
 		this.load_Item_to_Item_edges(purchased_with_df, "purchased_with")
-	}
-
-	def create_schema() {
-		val cluster:org.apache.tinkerpop.gremlin.driver.Cluster = org.apache.tinkerpop.gremlin.driver.Cluster.build("localhost").create()
-		val gremlin_client:org.apache.tinkerpop.gremlin.driver.Client = cluster.connect()
-		gremlin_client.submit("if(system.graph('%s').exists()){ system.graph('%s').drop() }".format(this.graph_name, this.graph_name))
-		gremlin_client.submit("system.graph('%s').create()".format(this.graph_name)).all.get
-		val aliased_client = gremlin_client.alias("%s.g".format(this.graph_name))
-		aliased_client.submit("schema.clear()")
-		aliased_client.submit("""
-				schema.config().option('graph.schema_mode').set(com.datastax.bdp.graph.api.model.Schema.Mode.Production);
-
-				schema.propertyKey('summary').Text().single().create()
-				schema.propertyKey('timestampAsText').Text().single().create()
-				schema.propertyKey('answerType').Text().single().create()
-				schema.propertyKey('rating').Double().single().create()
-				schema.propertyKey('description').Text().single().create()
-				schema.propertyKey('title').Text().single().create()
-				schema.propertyKey('imUrl').Text().single().create()
-				schema.propertyKey('name').Text().single().create()
-				schema.propertyKey('answer').Text().single().create()
-				schema.propertyKey('price').Double().single().create()
-				schema.propertyKey('rank').Int().single().create()
-				schema.propertyKey('id').Text().single().create()
-				schema.propertyKey('helpful').Double().single().create()
-				schema.propertyKey('brand').Text().single().create()
-				schema.propertyKey('reviewText').Text().single().create()
-				schema.propertyKey('timestamp').Timestamp().single().create()
-
-
-				schema.vertexLabel('Item').partitionKey("id").properties('price', 'title', 'imUrl', 'description', 'brand').create()
-				schema.vertexLabel('Category').partitionKey('id').create()
-				schema.vertexLabel('Customer').partitionKey('id').properties('name').create()
-
-				schema.edgeLabel('viewed_with').connection('Item', 'Item').create()
-				schema.edgeLabel('also_bought').connection('Item', 'Item').create()
-				schema.edgeLabel('reviewed').properties('summary', 'reviewText', 'timestampAsText', 'timestamp', 'helpful', 'rating').connection('Customer', 'Item').create()
-				schema.edgeLabel('purchased_with').connection('Item', 'Item').create()
-				schema.edgeLabel('belongs_in_category').connection('Item', 'Category').create()
-				schema.edgeLabel('has_salesRank').properties('rank').connection('Item', 'Category').create()
-				schema.edgeLabel('bought_after_viewing').connection('Item', 'Item').create()
-			  """).all.get
-		// close up our connection
-		cluster.close()
 	}
 }
