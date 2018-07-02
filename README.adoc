@@ -61,33 +61,33 @@ tar -zxvf resources/kafka_2.11-0.11.0.1.tgz
 You should now see a subdirectory `kafka_2.11-0.11.0.1`, which contains pre-built Kafka 2.11. 
 
 ```
-automaton@ip-10-200-177-27:~/kafka_to_sparkstreaming_to_graph$ ls
+~/kafka_to_sparkstreaming_to_graph$ ls
 build.sbt  kafka_2.11-0.11.0.1  kafka_2.11-0.11.0.1.tgz  README.md  resources  scripts  src
 ```
 
 
 * Launch the ZooKeeper server as a background process:
 ```
-automaton@ip-10-200-177-27:~/kafka_to_sparkstreaming_to_graph$ kafka_2.11-0.11.0.1/bin/zookeeper-server-start.sh kafka_2.11-0.11.0.1/config/zookeeper.properties &
+~/kafka_to_sparkstreaming_to_graph$ kafka_2.11-0.11.0.1/bin/zookeeper-server-start.sh kafka_2.11-0.11.0.1/config/zookeeper.properties &
 ```
 Note that we are specifying an already provided configuration file `kafka_2.11-0.11.0.1/config/zookeeper.properties` here. 
 
 When listing all running Java processes, we should now see `QuorumPeerMain`
 ```
-automaton@ip-10-200-177-27:~/kafka_to_sparkstreaming_to_graph$ jps
+~/kafka_to_sparkstreaming_to_graph$ jps
 14417 QuorumPeerMain
 14703 Jps
 ```
 
 * Launch the Kafka server as a background process:
 ```
-automaton@ip-10-200-177-27:~/kafka_to_sparkstreaming_to_graph$ kafka_2.11-0.11.0.1/bin/kafka-server-start.sh kafka_2.11-0.11.0.1/config/server.properties &
+~/kafka_to_sparkstreaming_to_graph$ kafka_2.11-0.11.0.1/bin/kafka-server-start.sh kafka_2.11-0.11.0.1/config/server.properties &
 ```
 Again, we are using a provided configuration file `kafka_2.11-0.11.0.1/bin/kafka-server-start.sh kafka_2.11-0.11.0.1/config/server.properties` for this server. 
 
 When listing all running Java processes, we should now also see `Kafka`:
 ```
-automaton@ip-10-200-177-27:~/kafka_to_sparkstreaming_to_graph$ jps
+~/kafka_to_sparkstreaming_to_graph$ jps
 14417 QuorumPeerMain
 15396 Jps
 15071 Kafka
@@ -103,10 +103,25 @@ The main abstraction which Kafka uses for reading and storing streamed input is 
 Let's go ahead and make a topic for each of these files:
 
 ```
+~/kafka_to_sparkstreaming_to_graph$ kafka_2.11-0.11.0.1/bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1  --topic metadata
 
 
+~/kafka_to_sparkstreaming_to_graph$ kafka_2.11-0.11.0.1/bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1  --topic reviews
 ```
 
+Let us verify that the topics were in fact successfully created:
+```
+~/kafka_to_sparkstreaming_to_graph$ kafka_2.11-0.11.0.1/bin/kafka-topics.sh --describe --zookeeper localhost:2181
+[2018-07-02 00:19:39,818] INFO Accepted socket connection from /127.0.0.1:33820 (org.apache.zookeeper.server.NIOServerCnxnFactory)
+[2018-07-02 00:19:39,821] INFO Client attempting to establish new session at /127.0.0.1:33820 (org.apache.zookeeper.server.ZooKeeperServer)
+[2018-07-02 00:19:39,822] INFO Established session 0x16456fc6dc80003 with negotiated timeout 30000 for client /127.0.0.1:33820 (org.apache.zookeeper.server.ZooKeeperServer)
+Topic:metadata	PartitionCount:1	ReplicationFactor:1	Configs:
+	Topic: metadata	Partition: 0	Leader: 0	Replicas: 0	Isr: 0
+Topic:reviews	PartitionCount:1	ReplicationFactor:1	Configs:
+	Topic: reviews	Partition: 0	Leader: 0	Replicas: 0	Isr: 0
+[2018-07-02 00:19:40,075] INFO Processed session termination for sessionid: 0x16456fc6dc80003 (org.apache.zookeeper.server.PrepRequestProcessor)
+[2018-07-02 00:19:40,077] INFO Closed socket connection for client /127.0.0.1:33820 which had sessionid 0x16456fc6dc80003 (org.apache.zookeeper.server.NIOServerCnxn)
+```
 
 
 7. Launch the Kafka standalone application:
