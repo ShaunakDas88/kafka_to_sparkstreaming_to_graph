@@ -235,7 +235,8 @@ The main abstraction which Kafka uses for reading and storing streamed input is 
 
 * `meta_Grocery_and_Gourmet_Food.json` : metadata associated to Amazon items
 
-* `reviews_Grocery_and_Gourmet_Food.json` : Data corresponding to customer reviews of Amazon items
+* `reviews_Grocery_and_Gourmet_Food.json` : data corresponding to customer reviews of Amazon items
+
 
 Let's go ahead and make a topic for each of these files:
 
@@ -258,6 +259,18 @@ Topic:reviews	PartitionCount:1	ReplicationFactor:1	Configs:
 	Topic: reviews	Partition: 0	Leader: 0	Replicas: 0	Isr: 0
 [2018-07-02 00:19:40,075] INFO Processed session termination for sessionid: 0x16456fc6dc80003 (org.apache.zookeeper.server.PrepRequestProcessor)
 [2018-07-02 00:19:40,077] INFO Closed socket connection for client /127.0.0.1:33820 which had sessionid 0x16456fc6dc80003 (org.apache.zookeeper.server.NIOServerCnxn)
+```
+
+Next, we re-direct data from our json files into the respective topics that were just created
+
+* Item metadata:
+```
+~/kafka_to_sparkstreaming_to_graph$ kafka_2.11-0.11.0.1/bin/kafka-console-producer.sh --broker-list localhost:9092 --topic metadata < amazon_data/meta_Grocery_and_Gourmet_Food.json
+```
+
+* Item review data:
+```
+~/kafka_to_sparkstreaming_to_graph$ kafka_2.11-0.11.0.1/bin/kafka-console-producer.sh --broker-list localhost:9092 --topic reviews < amazon_data/reviews_Grocery_and_Gourmet_Food.json 
 ```
 
 == RUNNING THE SPARK APPLICATION
