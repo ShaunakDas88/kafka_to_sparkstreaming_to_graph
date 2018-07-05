@@ -24,38 +24,47 @@ class AmazonGraphFramesUtility
 
 	def load_item_vertices(metadata_df: DataFrame) 
 	{
-		this.graph.updateVertices(metadata_df.filter("asin is not null").withColumn("~label", lit("Item")).withColumnRenamed("asin", "_id"))
+		val start = System.nanoTime()
+		metadata_df.withColumn("~label", lit("Item")).withColumnRenamed("asin", "_id")
+		this.graph.updateVertices(metadata_df.withColumn("~label", lit("Item")).withColumnRenamed("asin", "_id"))
+		val duration = (System.nanoTime() - start)/scala.math.pow(10,9)
+		System.err.println(duration)
+		
 	}
 
 	def load_customer_vertices(reviews_df: DataFrame) 
 	{
-		this.graph.updateVertices(reviews_df.filter("reviewerID is not null").withColumn("~label", lit("Customer")).withColumnRenamed("reviewerID", "_id").withColumnRenamed("reviewerName", "name"))
+		this.graph.updateVertices(reviews_df.withColumn("~label", lit("Customer")).withColumnRenamed("reviewerID", "_id").withColumnRenamed("reviewerName", "name"))
 	}
 
 	def load_category_vertices(metadata_df: DataFrame) 
 	{
-		val categories_df = metadata_df.filter("asin is not null").select(col("asin"), explode(col("categories"))).select(col("asin"), explode(col("col")))
+		val start = System.nanoTime()
+		val categories_df = metadata_df.select(col("asin"), explode(col("categories"))).select(col("asin"), explode(col("col")))
 		this.graph.updateVertices(categories_df.withColumn("~label", lit("Category")).withColumnRenamed("col", "_id"))
+                val duration = (System.nanoTime() - start)/scala.math.pow(10,9)
+                System.err.println(duration)
 	}
 
 	def load_reviewed_edges(reviews_df: DataFrame) 
 	{
-		val e = reviews_df.filter("reviewerID is not null").select(this.graph.idColumn(lit("Customer"), col("reviewerID")) as "src", this.graph.idColumn(lit("Item"), col("asin")) as "dst",  lit("reviewed") as "~label")
+		val start = System.nanoTime()
+		val e = reviews_df.select(this.graph.idColumn(lit("Customer"), col("reviewerID")) as "src", this.graph.idColumn(lit("Item"), col("asin")) as "dst",  lit("reviewed") as "~label")
 		this.graph.updateEdges(e)
+                val duration = (System.nanoTime() - start)/scala.math.pow(10,9)
+                System.err.println(duration)
 	}
 
 	def load_belongs_in_category_edges(metadata_df: DataFrame) 
 	{
-		val categories_df = metadata_df.filter("asin is not null").select(col("asin"), explode(col("categories"))).select(col("asin"), explode(col("col")))
+		val start = System.nanoTime()
+		val categories_df = metadata_df.select(col("asin"), explode(col("categories"))).select(col("asin"), explode(col("col")))
 		val e = categories_df.select(this.graph.idColumn(lit("Item"), col("asin")) as "src", this.graph.idColumn(lit("Category"), col("col")) as "dst",  lit("belongs_in_category") as "~label")
 		this.graph.updateEdges(e)
-	}
+                val duration = (System.nanoTime() - start)/scala.math.pow(10,9)
+                System.err.println(duration)
 
-        /*def load_has_salesRank_edges(metadata_df: DataFrame) 
-	{
-                val has_salesRank_df = metadata_df.select(col("asin"), explode(col("salesRankrelated.also_viewed")))
-  
-        }*/
+	}
 
 	def load_Item_to_Item_edges(df: DataFrame, label: String) 
 	{
@@ -68,25 +77,39 @@ class AmazonGraphFramesUtility
 
 	def load_viewed_with_edges(metadata_df: DataFrame) 
 	{
-		val viewed_with_df = metadata_df.filter("asin is not null").select(col("asin"), explode(col("related.also_viewed")))
+		val start = System.nanoTime()
+		val viewed_with_df = metadata_df.select(col("asin"), explode(col("related.also_viewed")))
 		this.load_Item_to_Item_edges(viewed_with_df, "viewed_with")
+                val duration = (System.nanoTime() - start)/scala.math.pow(10,9)
+                System.err.println(duration)
 	}
 
 	def load_also_bought_edges(metadata_df: DataFrame) 
 	{
-		val also_bought_df = metadata_df.filter("asin is not null").select(col("asin"), explode(col("related.also_bought")))
+		val start = System.nanoTime()
+		val also_bought_df = metadata_df.select(col("asin"), explode(col("related.also_bought")))
 		this.load_Item_to_Item_edges(also_bought_df, "also_bought")
+                val duration = (System.nanoTime() - start)/scala.math.pow(10,9)
+                System.err.println(duration)
 	}
 
 	def load_bought_after_viewing_edges(metadata_df: DataFrame) 
 	{
-		val bought_after_viewing_df = metadata_df.filter("asin is not null").select(col("asin"), explode(col("related.buy_after_viewing")))
+		val start = System.nanoTime()
+		val bought_after_viewing_df = metadata_df.select(col("asin"), explode(col("related.buy_after_viewing")))
 		this.load_Item_to_Item_edges(bought_after_viewing_df, "bought_after_viewing")
+                val duration = (System.nanoTime() - start)/scala.math.pow(10,9)
+                System.err.println(duration)
+
 	}
 	
 	def load_purchased_with_edges(metadata_df: DataFrame) 
 	{
-		val purchased_with_df = metadata_df.filter("asin is not null").select(col("asin"), explode(col("related.bought_together")))
+		val start = System.nanoTime()
+		val purchased_with_df = metadata_df.select(col("asin"), explode(col("related.bought_together")))
 		this.load_Item_to_Item_edges(purchased_with_df, "purchased_with")
+                val duration = (System.nanoTime() - start)/scala.math.pow(10,9)
+                System.err.println(duration)
+
 	}
 }
