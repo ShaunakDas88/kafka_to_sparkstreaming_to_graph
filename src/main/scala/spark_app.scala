@@ -47,9 +47,7 @@ object AmazonStreamedFromKafka
 			.foreachRDD( rdd => {
 				if(!rdd.isEmpty)
 				{
-					//rdd.collect().foreach(println)
 					val true_df = this.spark.read.json(rdd)
-					//true_df.printSchema
 
 					// this is data-set specific
 					if(data_source == "metadata")
