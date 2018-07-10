@@ -3,7 +3,6 @@ package com.datastax.kafka_to_sparkstreaming_to_graph
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.functions._
-import org.apache.spark.sql.types.{StructType, StructField, StringType, DoubleType, LongType, IntegerType}
 import org.apache.spark.sql.Row
 
 import org.apache.spark.streaming.{Seconds, StreamingContext}
@@ -29,7 +28,7 @@ object AmazonStreamedFromKafka
 	var max_empty_windows: Int = 1
 	var empty_metadata_windows = 0
 	var empty_review_windows = 0
-	var metrics_df: DataFrame = null
+	var metrics: Metrics = null
 
 	
 	def get_DStream(topics: Array[String], kafka_params: Map[String,Object]) : DStream[ConsumerRecord[String,String]] =
@@ -48,6 +47,10 @@ object AmazonStreamedFromKafka
 				if(!rdd.isEmpty)
 				{
 					val true_df = this.spark.read.json(rdd)
+					val start = System.nanoTime()
+					true_df.rdd.count
+					val duration = (System.nanoTime() - start)/scala.math.pow(10,9)
+					this.metrics.update("RDD --> DF", duration, false)
 
 					// this is data-set specific
 					if(data_source == "metadata")
@@ -92,7 +95,7 @@ object AmazonStreamedFromKafka
 					{
 						// want to display metrics
 						this.get_metrics("Final")
-						this.metrics_df.show
+						this.metrics.metrics_df.collect.map(_.mkString("\t")).foreach(println)
 						// graceful shutdown of Spark streaming context
                                                 System.err.println("Shutting down Spark streaming context!")
 						this.ssc.stop(true)
@@ -112,8 +115,8 @@ object AmazonStreamedFromKafka
                 val loaded_vertices = graphframes_utility.graph.V.count().next()
                 val loaded_edges = graphframes_utility.graph.E.count().next()
 
-                val result_df = Seq(DataRow(phase, this.max_rate_per_partition, loaded_vertices, vertex_loading_time, loaded_edges, edge_loading_time, vertex_loading_time + edge_loading_time)).toDF("Phase", "Kafka ingestion rate", "cumulative vertices loaded", "cumulative vertex loading time (sec)", "cumulative edges loaded", "cumulative edge loading time (sec)", "cumulative vertex + edge loading time (sec)")
-		this.metrics_df = this.metrics_df.union(result_df)
+                val result_df = Seq(DataRow(phase, this.max_rate_per_partition, loaded_vertices, vertex_loading_time, loaded_edges, edge_loading_time, vertex_loading_time + edge_loading_time)).toDF("Phase", "Kafka ingestion rate", "vertices loaded", "vertex loading time (sec)", "edges loaded", "edge loading time (sec)", "vertex + edge loading time (sec)")
+		this.metrics.metrics_df = this.metrics.metrics_df.union(result_df)
 	}
 
 	def main(args: Array[String])
@@ -127,18 +130,9 @@ object AmazonStreamedFromKafka
 		
 		this.spark = SparkSession.builder.appName("Amazon: Kafka -> SparkStreaming -> DseGraph").config("spark.streaming.kafka.maxRatePerPartition", this.max_rate_per_partition).getOrCreate()
 		this.ssc = new StreamingContext(this.spark.sparkContext, Seconds(1))
-		this.graphframes_utility = new AmazonGraphFramesUtility(graph_name, this.spark)
 
-		// will store metrics around loading in its own DataFrame
-		val schema = StructType(
-				StructField("Phase", StringType, true) ::
-				StructField("Kafka ingestion rate", IntegerType, true) :: 
-				StructField("cumulative vertices loaded", LongType, true) :: 
-				StructField("cumulative vertex loading time (sec)", DoubleType, true) :: 
-				StructField("cumulative edges loaded", LongType, true) ::
-				StructField("cumulative edge loading time (sec)", DoubleType, true) ::
-				StructField("cumulative vertex + edge loading time (sec)", DoubleType, true) :: Nil)
-		this.metrics_df = this.spark.createDataFrame(this.spark.sparkContext.emptyRDD[Row], schema)
+		this.metrics = new Metrics(graph_name, this.spark, this.max_rate_per_partition)
+		this.graphframes_utility = new AmazonGraphFramesUtility(graph_name, this.spark, this.metrics)
 		this.get_metrics("Start")
 
 		// these will be Kafka-specific
