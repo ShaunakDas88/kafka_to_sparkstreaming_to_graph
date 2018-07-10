@@ -46,7 +46,7 @@ object AmazonStreamedFromKafka
 			.foreachRDD( rdd => {
 				if(!rdd.isEmpty)
 				{
-					val true_df = this.spark.read.json(rdd)
+					val true_df = this.spark.read.json(rdd).repartition(2*11+1)
 					val start = System.nanoTime()
 					true_df.rdd.count
 					val duration = (System.nanoTime() - start)/scala.math.pow(10,9)
