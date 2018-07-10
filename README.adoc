@@ -16,7 +16,7 @@ This Spark application loads data from a Kafka queue into a DSE Graph instance, 
 
 == BUILD INSTRUCTIONS
 
-This project leverage sbt for Scala package management and compilation. In addition, one must have DSE Spark already running on their cluster. Make sure sbt is installed on your machine (https://www.scala-sbt.org/1.0/docs/Installing-sbt-on-Linux.html):
+This project leverage sbt for Scala package management and compilation. Make sure sbt is installed on your machine (https://www.scala-sbt.org/1.0/docs/Installing-sbt-on-Linux.html):
 
 ```
 echo "deb https://dl.bintray.com/sbt/debian /" | sudo tee -a /etc/apt/sources.list.d/sbt.list
@@ -32,6 +32,8 @@ git clone git@github.com:ShaunakDas88/kafka_to_sparkstreaming_to_graph.git
 cd <PATH TO kafka_to_sparkstreaming_to_graph>
 sbt package
 ```
+
+In addition, one must have DSE Spark and DSE Grapph both already running on their cluster.
 
 
 
