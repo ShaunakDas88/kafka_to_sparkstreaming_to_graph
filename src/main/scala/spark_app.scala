@@ -28,8 +28,8 @@ object AmazonStreamedFromKafka
 	var max_empty_windows: Int = 1
 	var empty_metadata_windows = 0
 	var empty_review_windows = 0
-	var metrics: Metrics = null
 
+	var start: Long = 0
 	
 	def get_DStream(topics: Array[String], kafka_params: Map[String,Object]) : DStream[ConsumerRecord[String,String]] =
 	{
@@ -46,11 +46,8 @@ object AmazonStreamedFromKafka
 			.foreachRDD( rdd => {
 				if(!rdd.isEmpty)
 				{
-					val true_df = this.spark.read.json(rdd).repartition(2*11+1)
+					val true_df = this.spark.read.json(rdd) //.repartition(2*11+1)
 					val start = System.nanoTime()
-					true_df.rdd.count
-					val duration = (System.nanoTime() - start)/scala.math.pow(10,9)
-					this.metrics.update("RDD --> DF", duration, false)
 
 					// this is data-set specific
 					if(data_source == "metadata")
@@ -93,9 +90,9 @@ object AmazonStreamedFromKafka
 					}
 					if (scala.math.min(this.empty_metadata_windows, this.empty_review_windows) == this.max_empty_windows)
 					{
-						// want to display metrics
-						this.get_metrics("Final")
-						this.metrics.metrics_df.collect.map(_.mkString("\t")).foreach(println)
+						val duration = (System.nanoTime() - start)/scala.math.pow(10,9)
+						System.err.println("Wall time")
+						System.err.println(duration)
 						// graceful shutdown of Spark streaming context
                                                 System.err.println("Shutting down Spark streaming context!")
 						this.ssc.stop(true)
@@ -103,20 +100,6 @@ object AmazonStreamedFromKafka
 					}
 				}
 			})
-	}
-
-	def get_metrics(phase: String)
-	{
-		val spark2 = this.spark
-		import spark2.implicits._
-
-		val vertex_loading_time = this.graphframes_utility.metrics.cumulative_vertex_loading_time
-                val edge_loading_time = this.graphframes_utility.metrics.cumulative_edge_loading_time
-                val loaded_vertices = graphframes_utility.graph.V.count().next()
-                val loaded_edges = graphframes_utility.graph.E.count().next()
-
-                val result_df = Seq(DataRow(phase, this.max_rate_per_partition, loaded_vertices, vertex_loading_time, loaded_edges, edge_loading_time, vertex_loading_time + edge_loading_time)).toDF("Phase", "Kafka ingestion rate", "vertices loaded", "vertex loading time (sec)", "edges loaded", "edge loading time (sec)", "vertex + edge loading time (sec)")
-		this.metrics.metrics_df = this.metrics.metrics_df.union(result_df)
 	}
 
 	def main(args: Array[String])
@@ -127,13 +110,12 @@ object AmazonStreamedFromKafka
                 val review_topic = Array(args(2))
 		this.max_rate_per_partition = args(3).toInt
 		this.max_empty_windows = args(4).toInt
+		this.start = System.nanoTime()
 		
 		this.spark = SparkSession.builder.appName("Amazon: Kafka -> SparkStreaming -> DseGraph").config("spark.streaming.kafka.maxRatePerPartition", this.max_rate_per_partition).getOrCreate()
 		this.ssc = new StreamingContext(this.spark.sparkContext, Seconds(1))
 
-		this.metrics = new Metrics(graph_name, this.spark, this.max_rate_per_partition)
-		this.graphframes_utility = new AmazonGraphFramesUtility(graph_name, this.spark, this.metrics)
-		this.get_metrics("Start")
+		this.graphframes_utility = new AmazonGraphFramesUtility(graph_name, this.spark)
 
 		// these will be Kafka-specific
 		val kafka_params = Map[String, Object](
